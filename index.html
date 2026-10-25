@@ -193,12 +193,24 @@ $('admin-login-submit').addEventListener('click',()=>{
 });
 $('passengers').addEventListener('change',()=>{if(selectedSeats.length>Number($('passengers').value)){selectedSeats=selectedSeats.slice(0,Number($('passengers').value));if(selected)renderSeats()}});
 $('confirm').addEventListener('click',()=>{
- const name=$('name').value.trim(),phone=$('phone').value.trim();
- if(!selectedSeats.length||selectedSeats.length!==Number($('passengers').value)){$('confirmation').style.display='block';$('confirmation').textContent=`অনুগ্রহ করে ${$('passengers').value} জন যাত্রীর জন্য ঠিক ${$('passengers').value}টি সিট নির্বাচন করুন।`;return}
- if(!name||!/^01[3-9]\d{8}$/.test(phone)){ $('confirmation').style.display='block';$('confirmation').textContent='নাম লিখুন এবং সঠিক ১১ সংখ্যার বাংলাদেশি মোবাইল নম্বর দিন।';return}
- const ref='PT'+Math.random().toString(36).slice(2,8).toUpperCase();
- $('confirmation').style.display='block';
- $('confirmation').innerHTML=`<strong>ডেমো বুকিং তৈরি হয়েছে!</strong><br>রেফারেন্স: ${ref}<br>যাত্রী: ${name}<br>সিট: ${selectedSeats.join(', ')}<br>পেমেন্ট: bKash নির্বাচিত (এখনও সংযুক্ত নয়)<br>মনে রাখুন: এটি শুধু নমুনা; বাস্তব টিকিট বা পেমেন্ট নয়।`;
+ $('confirmation').innerHTML=`
+<strong>ডেমো বুকিং তৈরি হয়েছে!</strong>
+<div class="receipt">
+  <h3>Rowmari Bus Ticket — বুকিং রসিদ</h3>
+  <p>রেফারেন্স: ${ref}</p>
+  <p>যাত্রী: ${name}</p>
+  <p>মোবাইল: ${phone}</p>
+  <p>সিট: ${selectedSeats.join(', ')}</p>
+  <p>পেমেন্ট: bKash (ডেমো)</p>
+  <p>মনে রাখুন: এটি নমুনা বুকিং, বাস্তব টিকিট নয়।</p>
+</div>
+<div class="receipt-actions">
+  <button type="button" id="save-ticket-pdf">টিকিট PDF সেভ করুন</button>
+  <button type="button" id="print-ticket">প্রিন্ট করুন</button>
+</div>
+`;
+$('save-ticket-pdf').addEventListener('click',()=>window.print());
+$('print-ticket').addEventListener('click',()=>window.print());
 });
 </script>
 </body>

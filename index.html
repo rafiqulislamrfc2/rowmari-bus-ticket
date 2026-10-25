@@ -82,8 +82,9 @@ footer { text-align:center; padding:24px; font-size:13px; color:light-dark(#6678
 </head>
 <body>
 <div id="app">
-<header><div class="nav"><div class="brand">Rowmari <span>Bus Ticket</span> 🚌</div><small>আপনার যাত্রা, আমাদের অঙ্গীকার</small></div></header>
-<section class="hero"><div class="hero-inner"><h1>Rowmari Bus Ticket-এ স্বাগতম</h1><p>আপনার বাসের টিকিট খুঁজুন, যাত্রা পরিকল্পনা করুন এবং সহজে বুকিং দিন।</p></div></section>
+
+<header><div class="nav"><div class="brand">Rowmari <span>Bus Ticket</span> 🚌</div><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end"><small>আপনার যাত্রা, আমাদের অঙ্গীকার</small><button type="button" id="admin-login-open" style="background:#fff;color:#0759a5">অ্যাডমিন লগইন</button></div></div></header>
+
 <main>
 <section class="panel" aria-label="বাস খোঁজার ফর্ম">
 <div class="fields">
@@ -116,6 +117,27 @@ footer { text-align:center; padding:24px; font-size:13px; color:light-dark(#6678
 <div class="modal-actions"><button class="secondary-btn" id="cancel">বাতিল</button><button id="confirm">ডেমো বুকিং করুন</button></div>
 <div id="confirmation"></div><p class="muted">বিকাশ / নগদ পেমেন্ট চালু করতে মার্চেন্ট অ্যাকাউন্ট ও নিরাপদ পেমেন্ট গেটওয়ে সংযোগ প্রয়োজন। এই প্রিভিউতে বাস্তব পেমেন্ট নেওয়া হয় না।</p>
 </div></div>
+
+<div class="modal-backdrop" id="admin-modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
+    <h2 id="admin-modal-title">অ্যাডমিন লগইন</h2>
+    <div class="fields">
+      <div style="grid-column:1/-1">
+        <label for="admin-email">ইমেইল</label>
+        <input id="admin-email" type="email" placeholder="Admin email">
+      </div>
+      <div style="grid-column:1/-1">
+        <label for="admin-password">পাসওয়ার্ড</label>
+        <input id="admin-password" type="password" placeholder="পাসওয়ার্ড লিখুন">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="secondary-btn" id="admin-login-cancel">বন্ধ করুন</button>
+      <button type="button" id="admin-login-submit">লগইন</button>
+    </div>
+    <p id="admin-login-message" style="display:none">এটি ডেমো ফর্ম।</p>
+  </div>
+</div>
 <script>
 const $ = id => document.getElementById(id);
 const today = new Date(); const localToday = new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
@@ -146,6 +168,27 @@ $('search').addEventListener('click',searchBuses);
 document.querySelectorAll('.route').forEach(btn=>btn.addEventListener('click',()=>{$('from').value=btn.dataset.from;$('to').value=btn.dataset.to;searchBuses()}));
 $('cancel').addEventListener('click',()=>$('modal').classList.remove('open'));
 $('modal').addEventListener('click',e=>{if(e.target===$('modal'))$('modal').classList.remove('open')});
+
+$('admin-login-open').addEventListener('click',()=>{
+  $('admin-login-message').style.display='block';
+  $('admin-login-message').textContent='এটি ডেমো লগইন ফর্ম। বাস্তব লগইনের জন্য নিরাপদ সার্ভার ও ডাটাবেস প্রয়োজন।';
+  $('admin-modal').classList.add('open');
+});
+
+$('admin-login-cancel').addEventListener('click',()=>{
+  $('admin-modal').classList.remove('open');
+});
+
+$('admin-modal').addEventListener('click',e=>{
+  if(e.target===$('admin-modal')){
+    $('admin-modal').classList.remove('open');
+  }
+});
+
+$('admin-login-submit').addEventListener('click',()=>{
+  $('admin-login-message').style.display='block';
+  $('admin-login-message').textContent='এটি ডেমো ফর্ম—পাসওয়ার্ড যাচাই করা হচ্ছে না।';
+});
 $('passengers').addEventListener('change',()=>{if(selectedSeats.length>Number($('passengers').value)){selectedSeats=selectedSeats.slice(0,Number($('passengers').value));if(selected)renderSeats()}});
 $('confirm').addEventListener('click',()=>{
  const name=$('name').value.trim(),phone=$('phone').value.trim();

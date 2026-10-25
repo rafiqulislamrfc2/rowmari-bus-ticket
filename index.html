@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rowmari Bus Ticket — বাস টিকিট</title>
+<style>
+:root {
+  --site-primary: #0759a5;
+  --site-on-primary: #ffffff;
+  --site-secondary: #e5efff;
+  --site-on-secondary: #163e70;
+  --site-background: #f4f7fc;
+  --site-on-background: #182b40;
+  --site-font-body: "Noto Sans Bengali", "Hind Siliguri", system-ui, sans-serif;
+  --site-font-heading: "Noto Sans Bengali", "Hind Siliguri", system-ui, sans-serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+  color-scheme: light dark;
+}
+* { box-sizing: border-box; }
+body { margin:0; font-family:var(--site-font-body); background:light-dark(#f5f8f7,#101a19); color:light-dark(#182b28,#edf5f2); }
+#app { min-height:100vh; width:100%; background-color:var(--site-background); color:var(--site-on-background); }
+header { background:var(--site-primary); color:var(--site-on-primary); padding:calc(18px * var(--site-spacing-scale)) max(5vw,20px); }
+.nav { max-width:1120px; margin:auto; display:flex; justify-content:space-between; align-items:center; gap:16px; }
+.brand { font-weight:900; font-size:calc(24px * var(--site-heading-scale)); letter-spacing:-.5px; }
+.brand span { color:#b8d9ff; }
+.nav small { opacity:.9; }
+.hero { background:var(--site-primary); color:var(--site-on-primary); padding:28px max(5vw,20px) 78px; position:relative; overflow:hidden; }
+.hero:after { content:""; position:absolute; width:300px;height:300px;border:45px solid #ffffff18;border-radius:50%;right:-80px;top:-150px;pointer-events:none;opacity:var(--site-decoration-opacity); }
+.hero-inner { max-width:1120px; margin:auto; position:relative; z-index:1; }
+h1 { font-size:calc(clamp(28px,4vw,43px) * var(--site-heading-scale)); margin:0 0 10px; line-height:1.35; }
+.hero p { margin:0; opacity:.88; }
+main { max-width:1120px; margin:-45px auto 0; padding:0 20px 56px; position:relative; z-index:2; }
+.panel { background:light-dark(#ffffff,#1b2927); border:1px solid light-dark(#e2eae6,#33413e); border-radius:calc(20px * var(--site-radius-scale)); padding:calc(24px * var(--site-spacing-scale)); box-shadow:0 12px 32px #123c2b12; }
+.fields { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+label { display:block; font-weight:700; font-size:14px; margin-bottom:8px; }
+select,input { width:100%; border:1px solid light-dark(#d5e1dc,#42534e); border-radius:10px; padding:13px 12px; background:light-dark(#fff,#12201d); color:inherit; font:inherit; min-width:0; }
+button { border:0; border-radius:10px; padding:13px 18px; background:var(--site-primary); color:var(--site-on-primary); font:inherit; font-weight:800; cursor:pointer; transition:transform .15s,opacity .15s; }
+button:hover { opacity:.9; transform:translateY(-1px); }
+.search-btn { width:100%; margin-top:18px; }
+.section-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:32px 0 16px; }
+h2 { font-size:calc(23px * var(--site-heading-scale)); margin:0; }
+.muted { color:light-dark(#667873,#b1c0bb); font-size:14px; }
+.routes { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+.route { border:1px solid light-dark(#dce8e2,#344640); border-radius:14px; padding:18px; background:light-dark(#fff,#1b2927); cursor:pointer; text-align:left; color:inherit; }
+.route strong { display:block; font-size:18px; margin:8px 0; }
+.route .arrow { color:var(--site-primary); font-weight:900; }
+.route .fare { color:var(--site-primary); font-weight:900; font-size:20px; }
+.results { display:grid; gap:12px; }
+.bus { display:grid; grid-template-columns:1.5fr 1fr 1fr auto; gap:14px; align-items:center; padding:18px; border:1px solid light-dark(#dce8e2,#344640); border-radius:14px; background:light-dark(#fff,#1b2927); }
+.bus h3 { margin:0 0 5px; font-size:17px; }
+.bus p { margin:3px 0; font-size:13px; color:light-dark(#667873,#b1c0bb); }
+.price { font-size:20px; font-weight:900; }
+.tag { display:inline-block; padding:4px 8px; border-radius:6px; background:var(--site-secondary); color:var(--site-on-secondary); font-size:12px; font-weight:800; }
+.empty { text-align:center; padding:28px; border:1px dashed light-dark(#cbdad3,#40524c); border-radius:14px; }
+footer { text-align:center; padding:24px; font-size:13px; color:light-dark(#667873,#aebdb7); }
+.modal-backdrop { position:fixed; inset:0; background:#071d18aa; display:none; place-items:center; padding:18px; z-index:10; }
+.modal-backdrop.open { display:grid; }
+.modal { width:min(480px,100%); background:light-dark(#fff,#1b2927); color:light-dark(#182b28,#edf5f2); border-radius:18px; padding:24px; max-height:90vh; overflow:auto; }
+.modal h2 { margin-bottom:8px; }
+.modal .fields { grid-template-columns:1fr 1fr; margin:18px 0; }
+.seat-picker { margin:18px 0; padding:16px; border:1px solid light-dark(#dce8e2,#344640); border-radius:14px; }
+.seat-legend { display:flex; flex-wrap:wrap; gap:12px; font-size:12px; margin:10px 0 14px; }
+.seat-key { display:inline-flex; align-items:center; gap:5px; }
+.seat-dot { display:inline-block; width:13px; height:13px; border-radius:4px; border:1px solid #9db8aa; background:#fff; }
+.seat-dot.chosen { background:#0759a5; border-color:#0759a5; }
+.seat-dot.unavailable { background:#d7dfdc; border-color:#c2ccc7; }
+.seat-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; max-width:330px; margin:0 auto; }
+.seat { padding:9px 4px; border:1px solid #9db8aa; border-radius:7px; background:#fff; color:#182b28; font-size:13px; }
+.seat.selected { background:#0759a5; color:#fff; border-color:#0759a5; }
+.seat.unavailable { background:#d7dfdc; color:#697872; border-color:#c2ccc7; cursor:not-allowed; }
+.seat-summary { margin:12px 0 0; font-size:14px; font-weight:700; }
+.modal-actions { display:flex; gap:10px; justify-content:flex-end; }
+.secondary-btn { background:var(--site-secondary); color:var(--site-on-secondary); }
+#confirmation { display:none; margin-top:16px; padding:14px; border-radius:10px; background:var(--site-secondary); color:var(--site-on-secondary); }
+@media(max-width:760px) { .fields { grid-template-columns:1fr 1fr; } .routes { grid-template-columns:1fr; } .bus { grid-template-columns:1fr 1fr; } .bus button { grid-column:span 2; } }
+@media(max-width:430px) { .fields { grid-template-columns:1fr; } .panel { padding:17px; } .bus { grid-template-columns:1fr; } .bus button { grid-column:auto; } .section-head { align-items:flex-start; flex-direction:column; } }
+</style>
+</head>
+<body>
+<div id="app">
+<header><div class="nav"><div class="brand">Rowmari <span>Bus Ticket</span> 🚌</div><small>আপনার যাত্রা, আমাদের অঙ্গীকার</small></div></header>
+<section class="hero"><div class="hero-inner"><h1>Rowmari Bus Ticket-এ স্বাগতম</h1><p>আপনার বাসের টিকিট খুঁজুন, যাত্রা পরিকল্পনা করুন এবং সহজে বুকিং দিন।</p></div></section>
+<main>
+<section class="panel" aria-label="বাস খোঁজার ফর্ম">
+<div class="fields">
+<div><label for="from">কোথা থেকে</label><select id="from"><option>রৌমারী</option><option>ঢাকা</option></select></div>
+<div><label for="to">কোথায় যাবেন</label><select id="to"><option>ঢাকা</option><option>রৌমারী</option></select></div>
+<div><label for="date">যাত্রার তারিখ</label><input id="date" type="date"></div>
+<div><label for="passengers">যাত্রী সংখ্যা</label><select id="passengers"><option value="1">১ জন</option><option value="2">২ জন</option><option value="3">৩ জন</option><option value="4">৪ জন</option><option value="5">৫ জন</option></select></div>
+</div><button class="search-btn" id="search">বাস খুঁজুন →</button>
+</section>
+<div class="section-head"><h2>জনপ্রিয় গন্তব্য</h2><span class="muted">এক ক্লিকে রুট বেছে নিন</span></div>
+<section class="routes">
+<button class="route" data-from="রৌমারী" data-to="ঢাকা"><span class="arrow">রৌমারী → ঢাকা</span><strong>ঢাকাগামী বাস</strong><span class="muted">বাস অপারেটর ও সময় দেখুন</span><p class="fare">ভাড়া অপারেটরভেদে</p></button>
+<button class="route" data-from="ঢাকা" data-to="রৌমারী"><span class="arrow">ঢাকা → রৌমারী</span><strong>রৌমারীগামী বাস</strong><span class="muted">ফেরার যাত্রা খুঁজুন</span><p class="fare">ভাড়া অপারেটরভেদে</p></button>
+<div class="route" role="group" aria-label="বাস অপারেটর"><span class="arrow">আমাদের অপারেটর</span><strong>RIFAT · SIAM · POLY</strong><span class="muted">PARIBAHAN</span><p class="fare">রৌমারী ↔ ঢাকা</p></div>
+</section>
+<div class="section-head"><h2 id="results-title">আপনার পরবর্তী যাত্রা</h2><span class="muted" id="result-count">ডেমো বাস তালিকা</span></div>
+<section id="results" class="results"><div class="empty"><strong>আপনার রুট নির্বাচন করুন</strong><p class="muted">উপরের ফর্ম থেকে যাত্রার তথ্য দিয়ে বাস খুঁজুন।</p></div></section>
+<div class="section-head"><h2>পরিচালনা নীতি</h2><span class="muted">প্রাথমিক পরিকল্পনা</span></div>
+<section class="panel" aria-label="কমিশন ও অপারেটর অনুমতি"><p><strong>কমিশন:</strong> প্রতি সফল টিকিটে ৳২০। মূল অ্যাডমিন কমিশনের পরিমাণ পরিবর্তন করতে পারবেন।</p><p><strong>অপারেটর অ্যাক্সেস:</strong> প্রতিটি অপারেটর শুধু নিজের বুকিং ও বিক্রির রিপোর্ট দেখতে পারবেন; অন্য অপারেটরের তথ্য দেখা বা পরিবর্তন করা যাবে না।</p><p class="muted">এটি পরিকল্পনার প্রদর্শনমাত্র। বাস্তব কমিশন গণনা, অ্যাডমিন লগইন ও পৃথক অপারেটর অনুমতি চালু করতে নিরাপদ সার্ভার ও ডাটাবেস সংযোগ প্রয়োজন।</p></section>
+</main>
+<div class="section-head"><h2>ওয়েবসাইট চালু করার পরবর্তী ধাপ</h2><span class="muted">ফ্রি প্রিভিউ → লাইভ সাইট</span></div>
+<section class="panel" aria-label="লাইভ ওয়েবসাইট চালুর নির্দেশনা"><p><strong>এই ফ্রি প্রিভিউতে আছে:</strong> রৌমারী ↔ ঢাকা রুট, তিনটি বাস অপারেটরের নমুনা তালিকা, বুকিং ফর্ম এবং প্রতি সফল টিকিটে ৳২০ কমিশনের পরিকল্পনা।</p><p><strong>সবার জন্য অনলাইনে চালু করতে লাগবে:</strong> একটি ফ্রি হোস্টিং অ্যাকাউন্ট ও সাবডোমেইন, নিরাপদ ডাটাবেস, মূল অ্যাডমিন এবং অপারেটর লগইন, যাচাইকৃত বাসের সময়/ভাড়া, এবং bKash মার্চেন্ট পেমেন্ট সংযোগ।</p><p class="muted">এখনকার সংস্করণটি প্রিভিউ—এতে বাস্তব টিকিট বুকিং, লগইন, কমিশন কাটা বা পেমেন্ট চালু নেই। লাইভ করার আগে অপারেটরের আসল তথ্য ও পেমেন্ট যাচাই ব্যবস্থা যোগ করতে হবে।</p></section>
+<footer>© ২০২৬ Rowmari Bus Ticket · বাস টিকিট বুকিং ওয়েবসাইট</footer>
+</div>
+<div class="modal-backdrop" id="modal">
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+<h2 id="modal-title">Rowmari Bus Ticket বুকিং</h2><p id="booking-summary" class="muted"></p>
+<section class="seat-picker" aria-label="সিট নির্বাচন"><strong>আপনার পছন্দের সিট নির্বাচন করুন</strong><p class="muted">নীল সিট নির্বাচিত। ধূসর সিট ডেমোতে আগে থেকেই বুকড দেখানো।</p><div class="seat-legend"><span class="seat-key"><i class="seat-dot"></i> খালি</span><span class="seat-key"><i class="seat-dot chosen"></i> নির্বাচিত</span><span class="seat-key"><i class="seat-dot unavailable"></i> বুকড (ডেমো)</span></div><div id="seat-grid" class="seat-grid"></div><p id="seat-summary" class="seat-summary">কোনো সিট নির্বাচন করা হয়নি</p></section>
+<div class="fields"><div><label for="name">যাত্রীর নাম</label><input id="name" placeholder="আপনার নাম"></div><div><label for="phone">মোবাইল নম্বর</label><input id="phone" inputmode="tel" placeholder="01XXXXXXXXX"></div><div style="grid-column:1/-1"><label for="payment-method">পেমেন্ট পদ্ধতি</label><select id="payment-method"><option value="bkash">bKash (প্রথম অগ্রাধিকার)</option></select></div></div>
+<div class="modal-actions"><button class="secondary-btn" id="cancel">বাতিল</button><button id="confirm">ডেমো বুকিং করুন</button></div>
+<div id="confirmation"></div><p class="muted">বিকাশ / নগদ পেমেন্ট চালু করতে মার্চেন্ট অ্যাকাউন্ট ও নিরাপদ পেমেন্ট গেটওয়ে সংযোগ প্রয়োজন। এই প্রিভিউতে বাস্তব পেমেন্ট নেওয়া হয় না।</p>
+</div></div>
+<script>
+const $ = id => document.getElementById(id);
+const today = new Date(); const localToday = new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+$('date').min=localToday; $('date').value=localToday;
+// Demo entries only: replace with verified operator schedules, fares and live seat inventory before launch.
+// Planned business rule: BDT 20 commission per successfully paid ticket; editable by the main admin after backend implementation.
+const commissionPerSuccessfulTicket = 20;
+const busOptions=[
+ {name:'RIFAT PARIBAHAN (ডেমো)',type:'বাসের ধরন যাচাই বাকি',depart:'সময় যাচাই বাকি',arrive:'সময় যাচাই বাকি',fare:800,seats:18},
+ {name:'SIAM PARIBAHAN (ডেমো)',type:'বাসের ধরন যাচাই বাকি',depart:'সময় যাচাই বাকি',arrive:'সময় যাচাই বাকি',fare:900,seats:12},
+ {name:'POLY PARIBAHAN (ডেমো)',type:'বাসের ধরন যাচাই বাকি',depart:'সময় যাচাই বাকি',arrive:'সময় যাচাই বাকি',fare:850,seats:24}
+];
+let selected=null;let selectedSeats=[];let unavailableSeats=['A2','B3','C1','D4'];
+function money(n){return '৳ '+n.toLocaleString('en-US')}
+function searchBuses(){
+ const from=$('from').value,to=$('to').value,date=$('date').value;
+ if(from===to){$('results').innerHTML='<div class="empty">শুরুর স্থান ও গন্তব্য আলাদা নির্বাচন করুন।</div>'; $('result-count').textContent='রুট ঠিক করুন';return}
+ if(!date){$('results').innerHTML='<div class="empty">অনুগ্রহ করে যাত্রার তারিখ নির্বাচন করুন।</div>';return}
+ $('results-title').textContent=from+' → '+to;
+ $('result-count').textContent='৩টি অপারেটর · নমুনা তথ্য';
+ $('results').innerHTML=busOptions.map((b,i)=>`<article class="bus"><div><h3>${b.name}</h3><span class="tag">${b.type}</span><p>যাত্রা: ${date}</p></div><div><strong>${b.depart}</strong><p>ছাড়ার সময়</p><strong>${b.arrive}</strong><p>পৌঁছানোর সময় (নমুনা)</p></div><div><div class="price">${money(b.fare)}</div><p>${b.seats}টি নমুনা আসন</p><p>${$('passengers').selectedOptions[0].text}</p></div><button data-book="${i}">সিট বেছে নিন</button></article>`).join('')+'<p class="muted">সতর্কতা: অপারেটর, ভাড়া, সময় ও আসনগুলো ডেমো তথ্য—বাস্তব বুকিংয়ের আগে যাচাইকৃত তথ্য বসাতে হবে।</p>';
+ $('results').querySelectorAll('[data-book]').forEach(btn=>btn.addEventListener('click',()=>openBooking(busOptions[+btn.dataset.book])));
+ $('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderSeats(){const letters=['A','B','C','D'];const total=selected?Math.min(selected.seats,32):24;$('seat-grid').innerHTML=Array.from({length:total},(_,i)=>{const seat=letters[Math.floor(i/8)]+((i%8)+1);const unavailable=unavailableSeats.includes(seat);return `<button type="button" class="seat ${unavailable?'unavailable':''} ${selectedSeats.includes(seat)?'selected':''}" data-seat="${seat}" ${unavailable?'disabled':''} aria-pressed="${selectedSeats.includes(seat)}">${seat}</button>`}).join('');$('seat-grid').querySelectorAll('[data-seat]').forEach(btn=>btn.addEventListener('click',()=>{const seat=btn.dataset.seat;const max=Number($('passengers').value);if(selectedSeats.includes(seat)){selectedSeats=selectedSeats.filter(s=>s!==seat)}else if(selectedSeats.length<max){selectedSeats.push(seat)}else{$('seat-summary').textContent=`আপনি সর্বোচ্চ ${max}টি সিট নির্বাচন করতে পারবেন।`;return}selectedSeats.sort();renderSeats()}));$('seat-summary').textContent=selectedSeats.length?`নির্বাচিত সিট: ${selectedSeats.join(', ')} · মোট ${selectedSeats.length}টি`:`সিট নির্বাচন করুন (যাত্রী ${$('passengers').value} জন)`}
+function openBooking(bus){selected=bus;selectedSeats=[];$('booking-summary').textContent=`${$('from').value} → ${$('to').value} · ${$('date').value} · ${bus.name} · ${money(bus.fare)} × ${$('passengers').value} জন`;$('confirmation').style.display='none';$('name').value='';$('phone').value='';renderSeats();$('modal').classList.add('open')}
+$('search').addEventListener('click',searchBuses);
+document.querySelectorAll('.route').forEach(btn=>btn.addEventListener('click',()=>{$('from').value=btn.dataset.from;$('to').value=btn.dataset.to;searchBuses()}));
+$('cancel').addEventListener('click',()=>$('modal').classList.remove('open'));
+$('modal').addEventListener('click',e=>{if(e.target===$('modal'))$('modal').classList.remove('open')});
+$('passengers').addEventListener('change',()=>{if(selectedSeats.length>Number($('passengers').value)){selectedSeats=selectedSeats.slice(0,Number($('passengers').value));if(selected)renderSeats()}});
+$('confirm').addEventListener('click',()=>{
+ const name=$('name').value.trim(),phone=$('phone').value.trim();
+ if(!selectedSeats.length||selectedSeats.length!==Number($('passengers').value)){$('confirmation').style.display='block';$('confirmation').textContent=`অনুগ্রহ করে ${$('passengers').value} জন যাত্রীর জন্য ঠিক ${$('passengers').value}টি সিট নির্বাচন করুন।`;return}
+ if(!name||!/^01[3-9]\d{8}$/.test(phone)){ $('confirmation').style.display='block';$('confirmation').textContent='নাম লিখুন এবং সঠিক ১১ সংখ্যার বাংলাদেশি মোবাইল নম্বর দিন।';return}
+ const ref='PT'+Math.random().toString(36).slice(2,8).toUpperCase();
+ $('confirmation').style.display='block';
+ $('confirmation').innerHTML=`<strong>ডেমো বুকিং তৈরি হয়েছে!</strong><br>রেফারেন্স: ${ref}<br>যাত্রী: ${name}<br>সিট: ${selectedSeats.join(', ')}<br>পেমেন্ট: bKash নির্বাচিত (এখনও সংযুক্ত নয়)<br>মনে রাখুন: এটি শুধু নমুনা; বাস্তব টিকিট বা পেমেন্ট নয়।`;
+});
+</script>
+</body>
+</html>
